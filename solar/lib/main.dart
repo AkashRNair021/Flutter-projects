@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() {
+  runApp(SolarSystemApp());
+}
+
+class SolarSystemApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SolarSystem(),
+    );
+  }
+}
+
+class SolarSystem extends StatefulWidget {
+  @override
+  _SolarSystemState createState() => _SolarSystemState();
+}
+
+class _SolarSystemState extends State<SolarSystem>
+    with TickerProviderStateMixin {
+  late AnimationController _earthController;
+  late AnimationController _moonController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _earthController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 10),
+    )..repeat();
+
+    _moonController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _earthController.dispose();
+    _moonController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Sun
+            Image.asset(
+              'assets/sun.png',
+              width: 100,
+              height: 100,
+            ),
+            // Earth Orbiting the Sun
+            AnimatedBuilder(
+              animation: _earthController,
+              builder: (context, child) {
+                double angle = _earthController.value * 2 * pi;
+                double radius = 150; // Orbit radius for Earth
+                return Transform.translate(
+                  offset: Offset(
+                    radius * cos(angle),
+                    radius * sin(angle),
+                  ),
+                  child: Earth(
+                    moonController: _moonController,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Earth extends StatelessWidget {
+  final AnimationController moonController;
+
+  Earth({required this.moonController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Moon Orbiting the Earth with a shorter distance
+        AnimatedBuilder(
+          animation: moonController,
+          builder: (context, child) {
+            double angle = moonController.value * 2 * pi;
+            double radius = 40; // Shorter orbit radius for Moon
+            return Transform.translate(
+              offset: Offset(
+                radius * cos(angle),
+                radius * sin(angle),
+              ),
+              child: Image.asset(
+                'assets/moon.png', // Updated to use moon image
+                width: 20,
+                height: 20,
+              ),
+            );
+          },
+        ),
+        // Earth
+        Image.asset(
+          'assets/earth.png',
+          width: 50,
+          height: 50,
+        ),
+      ],
+    );
+  }
+}

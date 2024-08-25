@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:projectflutt2/gallary.dart';
+
+import 'package:projectflutt2/screen1.dart';
+import 'package:projectflutt2/screen2.dart';
+
+void main() {
+  runApp(MaterialApp(
+    initialRoute: "/",
+    routes: {
+      "/": (context) => Gallery(),
+      "/screen2":(context)=>Imageview(imagePath: '',),
+    },
+  ));
+}
